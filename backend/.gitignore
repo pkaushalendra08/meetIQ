@@ -1,0 +1,19 @@
+# Security: NEVER upload API keys
+.env
+.env.local
+.env.*
+
+# Python: Virtual Environment (Heavy folders)
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# IDE Settings (VS Code, Pycharm)
+.vscode/
+.idea/
+
+# OS Junk
+.DS_Store
+Thumbs.db
