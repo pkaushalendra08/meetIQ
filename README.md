@@ -23,13 +23,13 @@ Built with **Next.js**, **Python**, **Stream SDK**, and **Google Gemini**.
 ## 🛠️ Tech Stack
 
 ### **Frontend**
-- **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
-- **Styling:** Tailwind CSS (Glassmorphism UI)
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Styling:** Tailwind CSS, ShadcnUI
 - **Video/Audio:** [Stream Video SDK](https://getstream.io/video/)
 - **Icons:** Lucide React
 
 ### **Backend**
-- **Runtime:** Python 3.11+
+- **Runtime:** Python 3.13
 - **AI Framework:** [Vision Agents](https://github.com/vision-agents)
 - **LLM:** Google Gemini 1.5 Flash (Realtime API)
 - **Infrastructure:** Asyncio, Webhooks
