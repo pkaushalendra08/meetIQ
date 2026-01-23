@@ -10,40 +10,54 @@ export function useStreamClients({ apiKey, user, token }) {
         if (!user || !token || !apiKey) return;
 
         let isMounted = true;
+        let activeVideoClient;
+        let activeChatClient;
 
         const initClients = async () => {
-
             try {
+                // 1. Setup Video Client (Always a new instance, safe to disconnect)
                 const tokenProvider = () => Promise.resolve(token);
-
-                const myVideoClient = new StreamVideoClient({
+                activeVideoClient = new StreamVideoClient({
                     apiKey,
                     user,
                     tokenProvider,
                 });
 
-                const myChatClient = StreamChat.getInstance(apiKey);
-                await myChatClient.connectUser(user, token);
+                // 2. Setup Chat Client (Singleton - requires special handling)
+                activeChatClient = StreamChat.getInstance(apiKey);
+
+               
+                
+                if (activeChatClient.userID && activeChatClient.userID !== user.id) {
+                    await activeChatClient.disconnectUser();
+                }
+
+                // Only connect if not currently connected
+                if (!activeChatClient.userID) {
+                    await activeChatClient.connectUser(user, token);
+                }
 
                 if (isMounted) {
-                    setVideoClient(myVideoClient);
-                    setChatClient(myChatClient);
+                    setVideoClient(activeVideoClient);
+                    setChatClient(activeChatClient);
                 }
             } catch (error) {
                 console.error("Client initialization error:", error);
             }
         };
+
         initClients();
+
         return () => {
             isMounted = false;
-            if(videoClient) {
-                videoClient.disconnectUser().catch(console.error);
+            
+           
+            if (activeVideoClient) {
+                activeVideoClient.disconnectUser().catch(console.error);
             }
-            if(chatClient) {
-                chatClient.disconnectUser().catch(console.error);
-            }
-        }
+
+        };
     }, [apiKey, user, token]);
 
-    return { videoClient, chatClient }; 
+    return { videoClient, chatClient };
 }

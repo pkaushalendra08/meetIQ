@@ -26,8 +26,11 @@ from vision_agents.core.llm.events import (
 )
 
 # Setup logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
+
+# Manually force our own logger to still show INFO (so we see the bot thinking)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 # Load environment variables (API Keys)
 load_dotenv()

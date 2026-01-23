@@ -7,11 +7,11 @@ import { useChatContext } from "stream-chat-react";
 export function TranscriptPanel() {
   const { client } = useChatContext();
   const [transcripts, setTranscripts] = useState([]);
-  const [isBotThinking, setIsBotThinking] = useState(false); // ✅ Thinking state
+  const [isBotThinking, setIsBotThinking] = useState(false);
   const transcriptEndRef = useRef(null);
   const call = useCall();
 
-  // Auto-scroll on new message OR when thinking starts
+  
   useEffect(() => {
     transcriptEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [transcripts, isBotThinking]);
@@ -23,55 +23,53 @@ export function TranscriptPanel() {
     const channel = client.channel("messaging", callId);
     channel.watch();
 
-    // 1. Handle Transcripts (Closed Captions)
+    
     const handleClosedCaption = (event) => {
       if (event.closed_caption) {
+        const text = event.closed_caption.text;
+        
         const newTranscript = {
-          text: event.closed_caption.text,
+          text: text,
           speaker: event.closed_caption.user?.name || "Unknown",
           timestamp: new Date(event.closed_caption.start_time).toLocaleTimeString(),
           isBot: false
         };
         setTranscripts((prev) => [...prev, newTranscript]);
+
+        
+        if (text.toLowerCase().includes("hey assistant")) {
+             setIsBotThinking(true);
+             
+            
+             setTimeout(() => setIsBotThinking(false), 15000);
+        }
       }
     };
 
-    // 2. Handle Chat Messages (Bot Replies)
+   
     const handleNewMessage = (event) => {
       const message = event.message;
       
-      // Stop thinking animation when ANY message arrives from bot
+      
       if (message?.user?.id === "meeting-assistant-bot") {
         setIsBotThinking(false);
         
-        // Add bot reply to transcript list
         const botReply = {
           text: message.text,
           speaker: "Meeting Assistant",
           timestamp: new Date().toLocaleTimeString(),
-          isBot: true // Flag for styling
+          isBot: true 
         };
         setTranscripts((prev) => [...prev, botReply]);
       }
     };
 
-    // 3. Handle "Typing..." Event
-    const handleTypingStart = (event) => {
-      if (event.user.id === "meeting-assistant-bot") {
-        setIsBotThinking(true);
-        // Failsafe: stop spinner after 10s if no reply
-        setTimeout(() => setIsBotThinking(false), 10000);
-      }
-    };
-
     call.on("call.closed_caption", handleClosedCaption);
     channel.on("message.new", handleNewMessage);
-    channel.on("typing.start", handleTypingStart);
 
     return () => {
       call.off("call.closed_caption", handleClosedCaption);
       channel.off("message.new", handleNewMessage);
-      channel.off("typing.start", handleTypingStart);
     };
   }, [call]);
 
@@ -101,7 +99,7 @@ export function TranscriptPanel() {
         </div>
       </div>
 
-      {/* Transcript List */}
+      {/* List */}
       <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 bg-gray-900/50 custom-scrollbar">
         {transcripts.length === 0 && !isBotThinking ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4 opacity-50">
@@ -148,7 +146,7 @@ export function TranscriptPanel() {
               </div>
             ))}
 
-            {/* ✅ THINKING INDICATOR */}
+            
             {isBotThinking && (
               <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-900/10 border border-blue-500/20 animate-pulse">
                 <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
