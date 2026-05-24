@@ -4,6 +4,7 @@ import logging
 import time
 from uuid import uuid4
 from dotenv import load_dotenv
+from aiohttp import web
 
 # Vision Agents imports
 from vision_agents.core import agents
@@ -224,11 +225,30 @@ def print_meeting_summary():
     print("\n" + "="*70)
 
 if __name__ == "__main__":
-    call_id = os.getenv("CALL_ID", f"meeting-{uuid4().hex[:8]}")
+    async def health_check(request):
+        return web.Response(text="Bot is running!")
+
+    async def start_dummy_server():
+        app = web.Application()
+        app.router.add_get("/", health_check)
+        runner = web.AppRunner(app)
+        await runner.setup()
+        port = int(os.environ.get("PORT", 8080))
+        site = web.TCPSite(runner, "0.0.0.0", port)
+        await site.start()
+        logger.info(f"🌐 Dummy web server started on port {port}")
+
+    async def main():
+        call_id = os.getenv("CALL_ID", f"meeting-{uuid4().hex[:8]}")
+        # 1. Start the fake web server so Render doesn't kill us
+        await start_dummy_server()
+        # 2. Start the actual AI bot
+        await start_agent(call_id)
+
     try:
-        asyncio.run(start_agent(call_id))
+        asyncio.run(main())
     except KeyboardInterrupt:
         print("\n\n🛑 Stopped by user")
     finally:
         if meeting_data["transcript"]:
-            print_meeting_summary() 
+            print_meeting_summary()
