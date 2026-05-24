@@ -91,7 +91,7 @@ export default function MeetingRoom({ callId, onLeave, userId }) {
 
           <div className="flex-1 w-full p-4 h-full box-border min-h-0">
             {/* Grid: Video | Transcript */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-4 h-full w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] grid-rows-[1fr_1fr] lg:grid-rows-1 gap-4 h-full w-full">
 
               {/* Left Column: Video Area */}
               <div className="flex flex-col gap-4 h-full min-h-0">
@@ -117,7 +117,7 @@ export default function MeetingRoom({ callId, onLeave, userId }) {
               </div>
 
               {/* Right Column: Transcript */}
-              <div className="hidden lg:flex flex-col h-full min-h-0 bg-gray-900/50 rounded-2xl border border-gray-700/50 overflow-hidden shadow-2xl backdrop-blur-sm">
+              <div className="flex flex-col h-full min-h-0 bg-gray-900/50 rounded-2xl border border-gray-700/50 overflow-hidden shadow-2xl backdrop-blur-sm">
                 <TranscriptPanel />
               </div>
             </div>

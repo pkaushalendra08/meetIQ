@@ -26,6 +26,11 @@ export function TranscriptPanel() {
     
     const handleClosedCaption = (event) => {
       if (event.closed_caption) {
+        // Ignore bot's speech in captions (we show the full chat message instead)
+        if (event.closed_caption.user?.id === "meeting-assistant-bot" || event.closed_caption.user?.name === "Meeting Assistant") {
+            return;
+        }
+        
         const text = event.closed_caption.text;
         
         const newTranscript = {
