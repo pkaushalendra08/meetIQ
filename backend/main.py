@@ -231,4 +231,4 @@ if __name__ == "__main__":
         print("\n\n🛑 Stopped by user")
     finally:
         if meeting_data["transcript"]:
-            print_meeting_summary()
+            print_meeting_summary() 
