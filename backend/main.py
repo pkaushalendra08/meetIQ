@@ -40,7 +40,8 @@ load_dotenv()
 meeting_data = {
     "transcript": [],
     "is_active": False,
-    "last_reply_time": 0  # Cooldown timer to prevent double-replies
+    "last_reply_time": 0,  # Cooldown timer to prevent double-replies
+    "current_response": "" # Stores the current LLM response
 }
 
 async def start_agent(call_id: str):
@@ -173,8 +174,18 @@ async def start_agent(call_id: str):
                 
                 # Trigger response
                 try:
+                    meeting_data["current_response"] = ""
                     await agent.simple_response(prompt)
-                    logger.info(f"🤖 Responding to question")
+                    
+                    # After response finishes, send the accumulated text to the chat channel
+                    final_answer = meeting_data["current_response"].strip()
+                    if final_answer and "channel" in meeting_data:
+                        await meeting_data["channel"].send_message(
+                            message={"text": final_answer},
+                            user_id="meeting-assistant-bot"
+                        )
+                        logger.info(f"🤖 Sent response to chat: {final_answer}")
+                        
                 except Exception as e:
                     logger.error(f"❌ Q&A error: {e}")
     
@@ -182,6 +193,7 @@ async def start_agent(call_id: str):
     @agent.events.subscribe
     async def handle_llm_response(event: LLMResponseChunkEvent):
         if hasattr(event, 'delta') and event.delta:
+            meeting_data["current_response"] += event.delta
             logger.info(f"🤖 Agent: {event.delta}")
     
     # Event: Cleanup

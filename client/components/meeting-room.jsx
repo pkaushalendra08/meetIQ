@@ -56,8 +56,8 @@ export default function MeetingRoom({ callId, onLeave, userId }) {
     return () => {
       if (call && !leavingRef.current) {
         leavingRef.current = true;
-        call.stopClosedCaptions().catch(() => {});
-        call.leave().catch(() => {});
+        call.stopClosedCaptions().catch(() => { });
+        call.leave().catch(() => { });
       }
     };
   }, [client, callId, userId]);
@@ -70,8 +70,8 @@ export default function MeetingRoom({ callId, onLeave, userId }) {
     leavingRef.current = true;
     try {
       if (call) {
-        await call.stopClosedCaptions().catch(() => {});
-        await call.leave().catch(() => {});
+        await call.stopClosedCaptions().catch(() => { });
+        await call.leave().catch(() => { });
       }
     } catch (err) {
       console.error("Error leaving call:", err);
@@ -88,24 +88,24 @@ export default function MeetingRoom({ callId, onLeave, userId }) {
       <StreamCall call={call}>
         {/* Main Container: Fixed to screen height, no window scrolling */}
         <div className="h-screen w-full bg-linear-to-br from-gray-900 via-gray-800 to-gray-950 text-white overflow-hidden flex flex-col">
-          
+
           <div className="flex-1 w-full p-4 h-full box-border min-h-0">
             {/* Grid: Video | Transcript */}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-4 h-full w-full">
-              
+
               {/* Left Column: Video Area */}
               <div className="flex flex-col gap-4 h-full min-h-0">
-                
+
                 {/* VIDEO CONTAINER - FIXED */}
-                
+
                 <div className="flex-1 w-full rounded-2xl bg-gray-900/50 border border-gray-700/50 overflow-hidden shadow-2xl relative min-h-0 flex flex-col">
-                  
+
                   {/* PaginatedGridLayout handles multiple users perfectly */}
-                  <PaginatedGridLayout 
-                    groupSize={8} 
-                    videoPlaceholder={false}
+                  <PaginatedGridLayout
+                    groupSize={8}
+
                   />
-                  
+
                 </div>
 
                 {/* Controls Bar */}
